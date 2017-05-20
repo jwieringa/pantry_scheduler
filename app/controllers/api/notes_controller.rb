@@ -1,7 +1,8 @@
 class Api::NotesController < ApplicationController
   before_action :authenticate_user!
+  respond_to :json
 
-  def edit
+  def update
     note = Note.find_by_id params["id"]
 
     # FIXME JSON-ify this later
@@ -15,8 +16,14 @@ class Api::NotesController < ApplicationController
   end
 
   def create
-    note = Note.create(params["note"])
-    fail "BOOM"
+    client = Client.find(params["client_id"])
+    note = client.notes.create!(create_params)
     render json: note.as_json
+  end
+
+  private
+
+  def create_params
+    params.require(:note).permit(:body)
   end
 end

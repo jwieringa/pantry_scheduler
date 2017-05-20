@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Notes Managment", type: :request do
+  before do
+    user = create_user
+    post "/users/sign_in", params: {user: {email: user.email, password: user.password}}
+  end
 
   it 'Creates a note' do
     client = create_client
@@ -9,7 +13,15 @@ RSpec.describe "Notes Managment", type: :request do
     }.to change(Note, :count).by(1)
   end
 
-  it 'Edits a note' do
+  it 'Updates a note' do
+    client = create_client
+    note = create_note(client)
+    put "/api/clients/#{client.id}/notes/#{note.id}", params: {note: {body: "new text"}}
+    expect(note.reload.body).to eql "new text"
+  end
+
+  def create_user
+    User.create( email: "moo@moo.com", password: "moomoomoo")
   end
 
   def create_client
