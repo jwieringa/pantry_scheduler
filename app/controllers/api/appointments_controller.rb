@@ -19,9 +19,27 @@ class Api::AppointmentsController < ApplicationController
     end
   end
 
+  def new
+    render json: Appointment.new
+  end
+
+  def create
+    appt = Appointment.new(appointment_params)
+    if appt.save
+      render json: appt
+    else
+      appt.valid?
+      render json: {
+        errors: {
+          message: appt.errors.full_messages.first
+        }
+      }, status: 400
+    end
+  end
+
   private
 
   def appointment_params
-    params.require(:appointment).expect(:time, :client_id, :family_size, :usda_qualifier)
+    params.require(:appointment).permit(:time, :client_id, :family_size, :usda_qualifier)
   end
 end
