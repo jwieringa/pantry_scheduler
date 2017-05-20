@@ -1,4 +1,4 @@
-class Api::AppointmentsController < ApplicationController
+class API::AppointmentsController < ApplicationController
   respond_to :json
 
   def index
